@@ -1,0 +1,45 @@
+.techfont{
+    font-family: 'Russo One',sans-serif;
+    font-size: 1.5 em;
+    margin-bottom: 10px;
+}
+
+
+
+.bigbrand{
+    font-size: 1.5em;
+}
+
+.centerstage{
+    margin-left: auto;
+    margin-right:auto;
+}
+
+
+.typing_loader{
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    -webkit-animation: typing 1s linear 
+    infinite alternate;
+       -moz-animation: Typing 1s linear infinite alternate;
+            animation: typing 1s linear infinite alternate;
+    margin: 46px auto; /* Not necessary- its only for layouting*/  
+    position: relative;
+    left: -12px;
+}
+
+.postdate{
+    text-align: center;
+}
+
+.posttitle{
+    font-family: 'Russo One',sans-serif;
+    font-size: 1.5em;
+    text-align: center;
+}
+
+.postcontent{
+    font-family: 'Montserrat';
+    font-size: 1.5em;
+}
