@@ -1,7 +1,14 @@
 {% extends "blog/base.html" %}
 
-{% block content %}
+{%  block content  %}
 <div class="container mt-5">
+    <!-- Search Form -->
+    <form method="get" action="">
+        <input type="text" name="q" placeholder="Search by title..." value="{{ request.GET.q }}">
+        <button type="submit">Search</button>
+    </form>
+
+    <!-- Display Posts -->
     <h1 class="mb-4">All Blog Posts</h1>
     
     {% for post in post_list %}
@@ -24,7 +31,10 @@
                 {% endif %}
             </div>
         </div>
+        <a href="{% url 'post_detail' pk=post.pk %}">Comments: {{ post.approved_comments.count }}</a>
     </div>
+    {% empty %}
+    <p>No posts found matching your search.</p>
     {% endfor %}
 </div>
 {% endblock %}

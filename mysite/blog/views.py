@@ -2,8 +2,10 @@ from django.contrib import messages
 from django.http import Http404
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse_lazy
-from blog.models import Post, Comment
-from django.views.generic import TemplateView, ListView, DeleteView, CreateView, DetailView, UpdateView
+from blog.models import Post,Comment
+from django.db.models import Q
+# Create your views here.
+from django.views.generic import TemplateView,ListView,DeleteView,CreateView,DetailView,UpdateView,DeleteView
 from django.utils import timezone
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
@@ -16,6 +18,7 @@ class AboutView(TemplateView):
 # Post List View: Show published posts
 class Post_List_View(ListView):
     model = Post
+    template_name = "blog/post_list.html"  # Explicitly specify the template (optional)
 
     def get_queryset(self):
         return Post.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')

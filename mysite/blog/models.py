@@ -17,7 +17,7 @@ class Post(models.Model):
 
     # Authorised Users can comment
     def approve_comments(self):
-        return self.comments.filter(approved_comments=True)
+        return self.comments.filter(approved_comment=True)
     
     # I think it will show post and the comments
     def get_absolute_url(self):
