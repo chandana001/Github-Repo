@@ -1,18 +1,24 @@
 {% extends "blog/base.html" %}
-{%block content%}
+{% block content %}
 <div class="centerstage">
+    <!-- Search Form -->
+    <form method="get" action="">
+        <input type="text" name="q" placeholder="Search by title..." value="{{ request.GET.q }}">
+        <button type="submit">Search</button>
+    </form>
+
+    <!-- Display Posts -->
     {% for post in post_list %}
     <div class="post">
-        <h1>Author: {{post.author}}</h1>
-        <h1><a href="{%url 'post_detail' pk=post.pk%}">{{post.title}}</a></h1>
-        <div  class="date">
-            <p>Published on:{{post.published_date|date:"D M Y"}}</p>
-        
-        
+        <h1>Author: {{ post.author }}</h1>
+        <h1><a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a></h1>
+        <div class="date">
+            <p>Published on: {{ post.published_date|date:"D M Y" }}</p>
         </div>
-        <a href="{%url 'post_detail' pk=post.pk%}">Comments:{{post.approved_comments.count}}</a>
-   
+        <a href="{% url 'post_detail' pk=post.pk %}">Comments: {{ post.approved_comments.count }}</a>
     </div>
+    {% empty %}
+    <p>No posts found matching your search.</p>
     {% endfor %}
 </div>
-{%endblock%}
+{% endblock %}

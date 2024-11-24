@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404, render,get_list_or_404,redirect
 from django.urls import reverse_lazy
 from blog.models import Post,Comment
+from django.db.models import Q
 # Create your views here.
 from django.views.generic import TemplateView,ListView,DeleteView,CreateView,DetailView,UpdateView,DeleteView
 from django.utils import timezone
@@ -13,10 +14,15 @@ class AboutView(TemplateView):
     template_name='blog/about.html'
 
 class Post_List_View(ListView):
-    model=Post
-    # It is just like filtering data,lte stands for less than or equal to ,- indicates descending order
+    model = Post
+    template_name = "blog/post_list.html"  # Explicitly specify the template (optional)
+
     def get_queryset(self):
-        return Post.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
+        query = self.request.GET.get('q')  # Get the search query from the URL parameters
+        queryset = Post.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
+        if query:
+            queryset = queryset.filter(Q(title__icontains=query))  # Filter by title
+        return queryset
 
 class PostDetailView(DetailView):
     model=Post
