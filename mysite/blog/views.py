@@ -30,6 +30,9 @@ class CreatePostView(LoginRequiredMixin,CreateView):
     model=Post
     # def get_success_url(self):
     #     return reverse_lazy('post_detail')
+    def form_valid(self, form):
+        form.instance.author = self.request.user  # Set the logged-in user as the author
+        return super().form_valid(form)
         
 
 class PostUpdateView(LoginRequiredMixin,UpdateView):
@@ -65,7 +68,7 @@ def add_comment_to_post(request,pk):
         form=CommentForm(request.POST)
         if form.is_valid():
             comment=form.save(commit=False)
-            comment1=Comment(post=post,author=data['author'],text=data['text'],created_date=timezone.now(),approved_comment=False)
+            comment1=Comment(post=post,author=request.user,text=data['text'],created_date=timezone.now(),approved_comment=False)
             # comment.post=post
             comment1.save()
             return redirect('post_detail',pk=post.pk)
@@ -84,7 +87,7 @@ def comment_approve(request,pk):
 
 @login_required
 def comment_remove(request,pk):
-    comment=get_object_or_404(comment,pk=pk)
+    comment=get_object_or_404(Comment,pk=pk)
     post_pk=comment.post.pk
     comment.delete()
     return redirect('post_detail',pk=post_pk)
