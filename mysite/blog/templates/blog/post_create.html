@@ -1,0 +1,53 @@
+{% extends "blog/base.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+  <!-- Back Button -->
+  <div class="mt-3">
+    <a href="{% url 'post_list' %}" class="btn btn-secondary btn-lg">Back to Home</a>
+</div>
+<div class="container mt-4">
+    <h1 class="mb-4">Create New Post</h1>
+
+
+    <form method="POST" class="card shadow-lg p-4 rounded border">
+        {% csrf_token %}
+        
+        <!-- Title Field -->
+        <div class="form-group mb-4">
+            <label for="id_title" class="form-label">Title</label>
+            {{ form.title|add_class:"form-control" }}
+            {% if form.title.errors %}
+                <div class="alert alert-danger mt-2">
+                    {% for error in form.title.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Content Field -->
+        <div class="form-group mb-4">
+            <label for="id_text" class="form-label">Content</label>
+            {{ form.text|add_class:"form-control" }}
+            {% if form.text.errors %}
+                <div class="alert alert-danger mt-2">
+                    {% for error in form.text.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Submit Button -->
+        <div class="d-grid gap-2 mt-4">
+            <button type="submit" class="btn btn-success btn-lg">Save Post</button>
+        </div>
+
+    </form>
+    <!-- Back Button -->
+    <div class="mt-3">
+        <a href="{% url 'post_list' %}" class="btn btn-secondary btn-lg">Back to Home</a>
+    </div>
+</div>
+{% endblock %}
