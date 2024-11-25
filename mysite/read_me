@@ -1,0 +1,3 @@
+#we are creating a blog,in which only authorised users can make a post,and any other user can comment on it,and authorised user can approve the comment.
+Any one can see the post and any  super user can edit it.
+Authorised user can delete the post.

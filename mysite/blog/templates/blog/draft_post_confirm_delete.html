@@ -1,0 +1,13 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Confirm Deletion</h1>
+    <p>Are you sure you want to delete the post "{{ post.title }}"?</p>
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Confirm Deletion</button>
+        <a href="{% url 'post_drafts' %}" class="btn btn-secondary">Back to Drafts</a>
+    </form>
+</div>
+{% endblock %}
