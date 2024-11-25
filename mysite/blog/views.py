@@ -18,10 +18,14 @@ class AboutView(TemplateView):
 # Post List View: Show published posts
 class Post_List_View(ListView):
     model = Post
-    template_name = "blog/post_list.html"  # Explicitly specify the template (optional)
+    template_name = "blog/post_list.html"  
 
     def get_queryset(self):
-        return Post.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
+        query = self.request.GET.get('q')  
+        queryset = Post.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
+        if query:
+            queryset = queryset.filter(Q(title__icontains=query))  # Filter by title
+        return queryset
 
 # Post Detail View: View individual post details
 class PostDetailView(DetailView):
@@ -34,21 +38,19 @@ class CreatePostView(CreateView):
     template_name = 'blog/post_create.html'
 
     def form_valid(self, form):
-        form.instance.author = self.request.user  # Assuming you set the author field
-        form.save()  # Save the new post
-
-        # Add a success message
+        form.instance.author = self.request.user 
+        form.save() 
+       
         messages.success(self.request, "Your post has been created successfully!")
 
-        # Redirect to the post list (home) page after saving
+        
         return redirect('post_list')
 # Update Post View: Edit an existing post
 class PostUpdateView(LoginRequiredMixin, UpdateView):
     model = Post
     form_class = PostForm
-    template_name = 'blog/post_edit.html'  # Ensure this matches your template file
-    success_url = '/'  # Redirect to a success page (could be the post detail or list view)
-
+    template_name = 'blog/post_edit.html'  
+    success_url = '/' 
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
@@ -58,12 +60,12 @@ class PostDeleteView(LoginRequiredMixin, DeleteView):
     model = Post
     success_url = reverse_lazy('post_list')
 
-# View to confirm deletion
+
 def delete_draft_post(request, pk):
     post = get_object_or_404(Post, pk=pk)
     
     # Check if the post is a draft
-    if post.published_date is None:  # assuming None indicates a draft
+    if post.published_date is None:
         if request.method == "POST":
             post.delete()
             messages.success(request, "Post has been deleted successfully.")
@@ -72,10 +74,10 @@ def delete_draft_post(request, pk):
         return render(request, 'blog/draft_post_confirm_delete.html', {'post': post})
     
     else:
-        # Redirect or show error if it's already published
+        
         messages.error(request, "You can't delete a published post.")
         return redirect('post_drafts')
-# Draft List View: Display posts that are drafts (i.e., unpublished)
+
 class DraftListView(LoginRequiredMixin, ListView):
     login_url = '/login/'
     template_name = 'blog/post_drafts.html'  # Ensure this matches your template file
@@ -103,16 +105,17 @@ def add_comment_to_post(request, pk):
 
     if request.method == 'POST':
         form = CommentForm(request.POST)
+        data = request.POST
         if form.is_valid():
-            comment = form.save(commit=False)
-            comment.post = post
-            comment.created_date = timezone.now()
-            comment.approved_comment = False  # Default to not approved
-            comment.save()
+            comment=form.save(commit=False)
+            comment1=Comment(post=post,author=request.user,text=data['text'],created_date=timezone.now(),approved_comment=False)
+            # comment.post=post
+            comment1.save()
+            
 
             # Show success message
             messages.success(request, "Your comment has been posted successfully!")
-            return redirect('post_detail', pk=post.pk)  # Redirect to post detail after comment is posted
+            return redirect('post_detail', pk=post.pk)  
         else:
             messages.error(request, "There was an error with your comment submission.")
     else:
@@ -124,9 +127,10 @@ def add_comment_to_post(request, pk):
 @login_required
 def comment_approve(request, pk):
     comment = get_object_or_404(Comment, pk=pk)
+    print(comment)
     comment.approve()
 
-    # Show success message for comment approval
+    
     messages.success(request, 'Your comment has been approved!')
 
     return redirect('post_detail', pk=comment.post.pk)
@@ -138,7 +142,7 @@ def comment_remove(request, pk):
     post_pk = comment.post.pk
     comment.delete()
 
-    # Show success message for comment removal
+    
     messages.success(request, 'Your comment has been removed!')
 
     return redirect('post_detail', pk=post_pk)
@@ -148,14 +152,14 @@ def comment_remove(request, pk):
 def post_publish(request, pk):
     post = get_object_or_404(Post, pk=pk)
 
-    # Set the published date to current time to publish the post
+   
     post.published_date = timezone.now()
     post.save()
 
-    # Display a success message
+    
     messages.success(request, 'Your post has been published!')
 
-    # Redirect to the post detail page
+    
     return redirect('post_detail', pk=post.pk)
 
 # Contact Us Page
@@ -166,8 +170,6 @@ def contact_us(request):
         name = request.POST.get("name")
         email = request.POST.get("email")
         message = request.POST.get("message")
-        # Here, you can handle the form data (e.g., save it to the database or send an email).
-        # For now, we'll just display the success message.
         message_sent = True
 
     return render(request, 'blog/contact_us.html', {'message_sent': message_sent})

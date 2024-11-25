@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
+from django.contrib.auth.views import LoginView, LogoutView
 from blog.views import AboutView, Post_List_View, CreatePostView, PostUpdateView, PostDetailView, PostDeleteView, DraftListView, comment_approve, DraftDetailView, post_publish
 from blog import views
 
@@ -21,4 +22,6 @@ urlpatterns = [
     path('contact/', views.contact_us, name='contact_us'),
     path('privacy-policy/', views.privacy_policy, name='privacy_policy'),
     path('terms-of-service/', views.terms_of_service, name='terms_of_service'),
+    path('accounts/login/',LoginView.as_view(template_name='registration/login.html'), name='login'),
+    path('accounts/logout/', LogoutView.as_view(), name='logout'),
 ]
